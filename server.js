@@ -1,6 +1,17 @@
 const express = require('express');
 const path = require('path');
+const http = require('http');
 const app = express();
+const redis = require('redis');
+
+const server = http.createServer(app);
+const redisCli = redis.createClient('14315', 'redis-14315.c17.us-east-1-4.ec2.cloud.redislabs.com');
+
+let io = require('socket.io').listen(server);
+
+redisCli.on('connect', () => {
+	console.log('redis connected!');
+});
 
 // Run the app by serving the static files
 // in the dist directory
@@ -24,4 +35,56 @@ app.get('/*', function (req, res) {
 });
 // Start the app by listening on the default
 // Heroku port
-app.listen(process.env.PORT || 8080);
+server.listen(process.env.PORT || 8080);
+
+io.on('connection', (socket) => {
+	console.log('New user connected!');
+
+	socket.on('online', (user) => {
+		let sessionObj = {};
+		sessionObj.user = user.username;
+		sessionObj.socket = socket.id;
+		let sessionObjString = JSON.stringify(sessionObj);
+		redisCli.sadd(['onlineUsernames', user.username], (err, result) => {
+			if (err) return console.log(err);
+			if (result === 1) {
+				redisCli.sadd(['online', sessionObjString], (err, result) => {
+					if (err) return console.log(err);
+					if (result === 1) {
+						console.log('OK!');
+					}
+				});
+				redisCli.smembers('online', (err, reply) => {
+					if (err) return console.log(err);
+					let resultJSON = parseResult(reply);
+					io.emit('getOnlines', { init: false, session: resultJSON });
+				});
+			}
+		});
+	});
+});
+
+//******************************** Utils Methods ************************************************************* */
+const parseResult = (array) => {
+	const arrayResult = [];
+	for (let item in array) {
+		arrayResult.push(JSON.parse(array[item]));
+	}
+	return arrayResult;
+}
+
+const getItemByResult = (reply, username) => {
+	let element = '';
+	if (reply.length > 0) {
+		reply.forEach((item) => {
+			if (item.includes(username)) {
+				element = item;
+				return;
+			}
+		});
+		return element;
+	}
+
+	return arrayResult;
+}
+

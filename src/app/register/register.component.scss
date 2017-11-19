@@ -1,0 +1,20 @@
+.code-breaking__register {
+		height: 100%;
+		width: 100%;
+    padding: 2em;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    .code-breaking__title {
+				flex-basis: 10%;
+				align-self: center;
+    }
+    .code_breaking__breadcrumb {
+				flex-basis: 10%;
+				align-self: center;
+    }
+    .register__form {
+				flex-basis: 50%;
+				align-self: center;
+    }
+}

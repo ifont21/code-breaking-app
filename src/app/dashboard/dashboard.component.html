@@ -1,0 +1,15 @@
+<div class="code-breaking__dashboard">
+  <div class="dashboard__online-users">
+     <h3 class="dashboard__online-users-title">Online Users</h3>
+     <ul class="online-users__list">
+       <li class="online-users__item" *ngFor="let item of userOnlines">
+         <a href="javascript:void(0)">
+           <div class="online-users__item-name">{{item.user}}</div>
+         </a>
+       </li>
+     </ul>
+  </div>
+  <div class="dashboard__ranking">
+    Ranking Here
+  </div>
+</div>

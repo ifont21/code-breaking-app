@@ -1,3 +1,6 @@
+import { RequestService } from './shared/services/request.service';
+import { CodeBreakingRouting } from './app-routing.module';
+import { DashboardComponent } from './dashboard/dashboard.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
@@ -5,7 +8,10 @@ import { AppComponent } from './app.component';
 import { CoreComponent } from './core/core.component';
 import { GameComponent } from './game/game.component';
 import { RegisterComponent } from './register/register.component';
-import { RankingComponent } from './ranking/ranking.component';
+import { SharedModule } from './shared/shared.module';
+import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+import { AppSocketIOService } from './shared/services/app-socket.io.service';
 
 @NgModule({
   declarations: [
@@ -13,12 +19,19 @@ import { RankingComponent } from './ranking/ranking.component';
     CoreComponent,
     GameComponent,
     RegisterComponent,
-    RankingComponent
+    DashboardComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    CodeBreakingRouting,
+    SharedModule,
+    HttpClientModule,
+    ReactiveFormsModule
   ],
-  providers: [],
+  providers: [
+    RequestService,
+    AppSocketIOService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

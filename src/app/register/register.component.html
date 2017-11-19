@@ -1,3 +1,15 @@
-<p>
-  register works!
-</p>
+<div class="code-breaking__register">
+  <div class="code-breaking__title">
+    Code Breaker
+  </div>
+  <div class="code_breaking__breadcrumb">
+    Let's Get Started and Challenge an Opponent
+  </div>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="register__form" novalidate>
+    <span class="ui-float-label">
+      <input id="float-input" type="text" size="30" formControlName="username" pInputText>
+      <label for="float-input">Username</label>
+      <button pButton type="submit" label="Start"></button>
+    </span>
+  </form>
+</div>
