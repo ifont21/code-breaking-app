@@ -1,3 +1,4 @@
+import { Authservice } from './../shared/services/auth.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CoreComponent implements OnInit {
 
-  constructor() { }
+  public userLoggedIn: string;
+
+  constructor(private authService: Authservice) { }
 
   ngOnInit() {
+    this.authService.getUserAuthenticated().subscribe(user => this.userLoggedIn = user);
   }
 
 }

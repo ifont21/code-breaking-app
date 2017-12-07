@@ -4,11 +4,13 @@
     flex-flow: column;
     .core__header {
         flex-basis: 10%;
+        border-bottom: 1px solid #e6e6e6;
     }
     .core__body {
         flex-basis: 80%;
     }
     .core__footer {
+        border-top: 1px solid #e6e6e6;
         flex-basis: 10%;
     }
 }

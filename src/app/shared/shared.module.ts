@@ -1,16 +1,22 @@
 import { NgModule } from '@angular/core';
-import { InputTextModule, ButtonModule } from 'primeng/primeng';
+import { InputTextModule, ButtonModule, ConfirmDialogModule, ConfirmationService, GrowlModule } from 'primeng/primeng';
 
 @NgModule({
   declarations: [],
   imports: [
     InputTextModule,
-    ButtonModule
+    ButtonModule,
+    ConfirmDialogModule,
+    GrowlModule
   ],
   exports: [
     InputTextModule,
-    ButtonModule
+    ButtonModule,
+    ConfirmDialogModule,
+    GrowlModule
   ],
-  providers: []
+  providers: [
+    ConfirmationService
+  ]
 })
 export class SharedModule { }

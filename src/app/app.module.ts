@@ -1,8 +1,10 @@
+import { Authservice } from './shared/services/auth.service';
 import { RequestService } from './shared/services/request.service';
 import { CodeBreakingRouting } from './app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import { CoreComponent } from './core/core.component';
@@ -23,6 +25,7 @@ import { AppSocketIOService } from './shared/services/app-socket.io.service';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     CodeBreakingRouting,
     SharedModule,
     HttpClientModule,
@@ -30,7 +33,8 @@ import { AppSocketIOService } from './shared/services/app-socket.io.service';
   ],
   providers: [
     RequestService,
-    AppSocketIOService
+    AppSocketIOService,
+    Authservice
   ],
   bootstrap: [AppComponent]
 })

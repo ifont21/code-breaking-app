@@ -1,0 +1,14 @@
+.code-breaking__dashboard {
+    height: 100%;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-flow: wrap;
+    .dashboard__online-users {
+        flex-basis: 30%;
+        border-right: 1px solid #e6e6e6;
+    }
+    .dashboard__ranking {
+        flex-basis: 70%;
+    }
+}

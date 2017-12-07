@@ -1,13 +1,23 @@
+<p-growl [value]="msgs"></p-growl>
+<p-confirmDialog></p-confirmDialog>
 <div class="code-breaking__dashboard">
   <div class="dashboard__online-users">
-     <h3 class="dashboard__online-users-title">Online Users</h3>
-     <ul class="online-users__list">
-       <li class="online-users__item" *ngFor="let item of userOnlines">
-         <a href="javascript:void(0)">
-           <div class="online-users__item-name">{{item.user}}</div>
-         </a>
-       </li>
-     </ul>
+    <h4 class="dashboard__online-users-title">Online Users</h4>
+    <ul class="online-users__list">
+      <li class="online-users__item" *ngFor="let item of userOnlines">
+        <a href="javascript:void(0)" (click)="challengeOpponent(item.user)">
+          <div class="online-users__item-name">{{item.user}}</div>
+        </a>
+      </li>
+    </ul>
+    <h4 class="dashboard__challenge-title">Challenges</h4>
+    <ul class="challenge__list">
+      <li class="challenge__item" *ngFor="let challenge of challenges">
+        <a href="javascript:void(0)" (click)="answerChallenge(challenge.challenger)">
+          <div class="challenge__item-name">{{challenge.challenger}}</div>
+        </a>
+      </li>
+    </ul>
   </div>
   <div class="dashboard__ranking">
     Ranking Here

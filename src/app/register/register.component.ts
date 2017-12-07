@@ -5,6 +5,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Player } from '../shared/models/player';
 import { AppSocketIOService } from '../shared/services/app-socket.io.service';
 import { Router } from '@angular/router';
+import { Authservice } from '../shared/services/auth.service';
 
 @Component({
   selector: 'cbr-register',
@@ -19,7 +20,8 @@ export class RegisterComponent implements OnInit {
   constructor(private request: RequestService,
     private fb: FormBuilder,
     private socketService: AppSocketIOService,
-    private router: Router) { }
+    private router: Router,
+    private authService: Authservice) { }
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -33,8 +35,9 @@ export class RegisterComponent implements OnInit {
       const username = this.form.controls['username'].value;
       this.request.post(this.path, { username })
         .subscribe((res: HttpResponse<Player>) => {
-          localStorage.setItem('username', res.body.username);
+          this.authService.login(res.body.username);
           this.socketService.emitToFetchOnlineUsers(res.body);
+          this.socketService.emitToFetchChallenges();
           this.socketService.getOnlineUsers();
           this.router.navigate(['/dashboard']);
           console.log('response', res.body);

@@ -62,6 +62,70 @@ io.on('connection', (socket) => {
 			}
 		});
 	});
+
+	socket.on('fetchChallenges', () => {
+		redisCli.smembers('challenges', (err, reply) => {
+			if (err) return console.log(err);
+			let result = parseResult(reply);
+			socket.emit('getChallenges', { init: true, challenges: result });
+		});
+	});
+
+	socket.on('challenger', (challenge) => {
+		const challengerObj = {
+			challenged: challenge.challenged,
+			challenger: challenge.challenger,
+			accept: false
+		};
+		redisCli.sadd(['challenges', JSON.stringify(challengerObj)], (err, result) => {
+			if (err) return console.log(err);
+			if (result === 1) {
+				redisCli.smembers('challenges', (err, reply) => {
+					if (err) return console.log(err);
+					let resultJSON = parseResult(reply);
+					socket.broadcast.emit('getChallenges', {
+						init: false,
+						challenges: resultJSON
+					});
+				});
+				redisCli.smembers('online', (err, reply) => {
+					if (err) return console.log(err);
+					let resultJSON = parseResult(reply);
+					console.log('here waaaaaaaaaaaaaaaaaay!!!!');
+					socket.emit('getOnlines', { init: false, session: resultJSON });
+				});
+			}
+		});
+	});
+
+	socket.on('disconnect', function () {
+		redisCli.smembers('online', (err, reply) => {
+			if (err) return console.log(err);
+			let onlineJSON = parseResult(reply);
+			const item = onlineJSON.filter((item) => {
+				return item.socket === socket.id;
+			})[0];
+			if (item) {
+				redisCli.srem(['onlineUsernames', item.user], (err, result) => {
+					if (err) return console.log(err);
+					if (result === 1) {
+						let itemToDelete = getItemByResult(reply, item.user);
+						redisCli.srem(['online', itemToDelete], (err, result) => {
+							if (err) return console.log(err);
+							if (result === 1) {
+								redisCli.smembers('online', (err, reply) => {
+									if (err) return console.log(err);
+									let onlineJSON = parseResult(reply);
+									io.emit('getOnlines', { init: false, session: onlineJSON });
+								});
+							}
+						});
+
+					}
+				});
+			}
+		});
+	});
 });
 
 //******************************** Utils Methods ************************************************************* */
