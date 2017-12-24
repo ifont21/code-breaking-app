@@ -1,3 +1,4 @@
+import { AuthGuard } from './shared/auth-guard';
 import { Authservice } from './shared/services/auth.service';
 import { RequestService } from './shared/services/request.service';
 import { CodeBreakingRouting } from './app-routing.module';
@@ -14,6 +15,7 @@ import { SharedModule } from './shared/shared.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AppSocketIOService } from './shared/services/app-socket.io.service';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -29,12 +31,14 @@ import { AppSocketIOService } from './shared/services/app-socket.io.service';
     CodeBreakingRouting,
     SharedModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CommonModule
   ],
   providers: [
     RequestService,
     AppSocketIOService,
-    Authservice
+    Authservice,
+    AuthGuard
   ],
   bootstrap: [AppComponent]
 })

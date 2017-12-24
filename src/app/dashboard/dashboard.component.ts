@@ -29,6 +29,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.socketService.getOnlineUsers();
     this.socketService.getChallenges();
+    this.socketService.onStartGame();
     this.socketService.onlineUsersSubject.subscribe(data => this.userOnlines = data);
     this.socketService.challengesSubject.subscribe(data => this.challenges = data);
     this.userLoggedIn = localStorage.getItem('username');
@@ -60,8 +61,7 @@ export class DashboardComponent implements OnInit {
         };
         this.requestService.post(this.path, payload)
           .subscribe((res: HttpResponse<any>) => {
-            this.socketService.emitStartChallenge(res.body);
-            this.router.navigate(['/game']);
+            this.socketService.emitStartChallenge(res.body._id);
           }, (error) => {
             this.msgs = [{ severity: 'error', summary: 'Error', detail: error }];
           });

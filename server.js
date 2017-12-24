@@ -98,6 +98,30 @@ io.on('connection', (socket) => {
 		});
 	});
 
+	socket.on('startChallenge', (challengeId) => {
+		io.emit('loadChallenge', challengeId);
+	});
+
+	socket.on('setNumber', (data) => {
+		socket.broadcast.emit('setOpponentNumber', data);
+	});
+
+	socket.on('readyToPlay', (data) => {
+		socket.broadcast.emit('loadPlay', data);
+	});
+
+	socket.on('turn', (data) => {
+		socket.broadcast.emit('turnPlay', data);
+	});
+
+	socket.on('opponentAttempts', (data) => {
+		socket.broadcast.emit('showAttempts', data);
+	});
+
+	socket.on('loser', (data) => {
+		socket.broadcast.emit('showLoserMessage', data);
+	})
+
 	socket.on('disconnect', function () {
 		redisCli.smembers('online', (err, reply) => {
 			if (err) return console.log(err);

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { InputTextModule, ButtonModule, ConfirmDialogModule, ConfirmationService, GrowlModule } from 'primeng/primeng';
+import { InputTextModule, ButtonModule, ConfirmDialogModule, ConfirmationService, GrowlModule, DialogModule } from 'primeng/primeng';
 
 @NgModule({
   declarations: [],
@@ -7,13 +7,15 @@ import { InputTextModule, ButtonModule, ConfirmDialogModule, ConfirmationService
     InputTextModule,
     ButtonModule,
     ConfirmDialogModule,
-    GrowlModule
+    GrowlModule,
+    DialogModule
   ],
   exports: [
     InputTextModule,
     ButtonModule,
     ConfirmDialogModule,
-    GrowlModule
+    GrowlModule,
+    DialogModule
   ],
   providers: [
     ConfirmationService

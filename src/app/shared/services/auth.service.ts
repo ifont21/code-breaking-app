@@ -21,7 +21,4 @@ export class Authservice {
   getUserAuthenticated() {
     return this.userAuthenticated;
   }
-
-
-
 }
