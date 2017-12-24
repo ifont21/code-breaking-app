@@ -1,3 +1,5 @@
+import { Authservice } from './../shared/services/auth.service';
+import { BaseActionComponent } from './../shared/components/base-action/base-action.component';
 import { RequestService } from './../shared/services/request.service';
 import { AppSocketIOService } from './../shared/services/app-socket.io.service';
 import { Component, OnInit } from '@angular/core';
@@ -12,7 +14,7 @@ import 'rxjs/add/operator/switchMap';
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss']
 })
-export class GameComponent implements OnInit {
+export class GameComponent extends BaseActionComponent implements OnInit {
 
   public challenge: any;
 
@@ -40,11 +42,14 @@ export class GameComponent implements OnInit {
   private path = '/challenges';
 
   constructor(
+    protected authService: Authservice,
     private socketService: AppSocketIOService,
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private request: RequestService
-  ) { }
+  ) {
+    super(authService);
+  }
 
   ngOnInit() {
 

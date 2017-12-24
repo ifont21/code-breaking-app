@@ -1,3 +1,4 @@
+import { BaseActionComponent } from './../shared/components/base-action/base-action.component';
 import { Router } from '@angular/router';
 import { HttpResponse } from '@angular/common/http';
 import { RequestService } from './../shared/services/request.service';
@@ -11,7 +12,7 @@ import { Authservice } from '../shared/services/auth.service';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent extends BaseActionComponent implements OnInit {
 
   public userOnlines: any;
   public challenges: any;
@@ -21,10 +22,12 @@ export class DashboardComponent implements OnInit {
   private path = '/challenges';
 
   constructor(private socketService: AppSocketIOService,
-    private authService: Authservice,
+    protected authService: Authservice,
     private confirmationService: ConfirmationService,
     private requestService: RequestService,
-    private router: Router) { }
+    private router: Router) {
+    super(authService);
+  }
 
   ngOnInit() {
     this.socketService.getOnlineUsers();
@@ -70,8 +73,8 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  @HostListener('window:beforeunload', ['$event'])
-  beforeunloadHandler(event) {
-    this.authService.logout('username');
-  }
+  // @HostListener('window:beforeunload', ['$event'])
+  // beforeunloadHandler(event) {
+  //   this.authService.logout('username');
+  // }
 }

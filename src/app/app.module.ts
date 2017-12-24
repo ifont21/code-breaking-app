@@ -1,3 +1,4 @@
+import { BaseActionComponent } from './shared/components/base-action/base-action.component';
 import { AuthGuard } from './shared/auth-guard';
 import { Authservice } from './shared/services/auth.service';
 import { RequestService } from './shared/services/request.service';
@@ -23,7 +24,8 @@ import { CommonModule } from '@angular/common';
     CoreComponent,
     GameComponent,
     RegisterComponent,
-    DashboardComponent
+    DashboardComponent,
+    BaseActionComponent
   ],
   imports: [
     BrowserModule,
