@@ -2,7 +2,7 @@
 <p-confirmDialog></p-confirmDialog>
 <div class="code-breaking__dashboard">
   <div class="dashboard__online-users">
-    <h4 class="dashboard__online-users-title">Online Users</h4>
+    <h4 class="dashboard__online-users-title" *ngIf="userOnlines">Online Users</h4>
     <ul class="online-users__list">
       <li class="online-users__item" *ngFor="let item of userOnlines">
         <a href="javascript:void(0)" (click)="challengeOpponent(item.user)">
@@ -10,7 +10,7 @@
         </a>
       </li>
     </ul>
-    <h4 class="dashboard__challenge-title">Challenges</h4>
+    <h4 class="dashboard__challenge-title" *ngIf="challenges">Challenges</h4>
     <ul class="challenge__list">
       <li class="challenge__item" *ngFor="let challenge of challenges">
         <a href="javascript:void(0)" (click)="answerChallenge(challenge.challenger)">
@@ -20,6 +20,12 @@
     </ul>
   </div>
   <div class="dashboard__ranking">
-    Ranking Here
+    <h4 class="dashboard__ranking-title" *ngIf="ranking">Ranking</h4>
+    <ol class="ranking__list">
+      <li class="ranking__item" *ngFor="let player of ranking">
+        <span class="ranking-item__username">{{player.username}}</span>
+        <span class="ranking-item__wins">won games: {{player.wins}}</span>
+      </li>
+    </ol>
   </div>
 </div>

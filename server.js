@@ -45,6 +45,13 @@ io.on('connection', (socket) => {
 		sessionObj.user = user.username;
 		sessionObj.socket = socket.id;
 		let sessionObjString = JSON.stringify(sessionObj);
+		if (user.reload) {
+			redisCli.smembers('online', (err, reply) => {
+				if (err) return console.log(err);
+				let resultJSON = parseResult(reply);
+				io.emit('getOnlines', { init: false, session: resultJSON });
+			});
+		}
 		redisCli.sadd(['onlineUsernames', user.username], (err, result) => {
 			if (err) return console.log(err);
 			if (result === 1) {

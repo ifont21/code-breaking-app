@@ -1,3 +1,4 @@
+<p-growl [value]="msgs"></p-growl>
 <div class="code-breaking__game">
   <h3>Challenge</h3>
   <div class="game__challengers">
@@ -55,4 +56,5 @@
 </div>
 <p-dialog [(visible)]="visible" [responsive]="true" modal="modal">
   <p>{{endGameMessage}}</p>
+  <button pButton type="button" label="Continue" (click)="continue()"></button>
 </p-dialog>

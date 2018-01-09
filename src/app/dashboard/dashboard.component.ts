@@ -1,3 +1,4 @@
+import { Player } from './../shared/models/player';
 import { BaseActionComponent } from './../shared/components/base-action/base-action.component';
 import { Router } from '@angular/router';
 import { HttpResponse } from '@angular/common/http';
@@ -15,6 +16,7 @@ import { Authservice } from '../shared/services/auth.service';
 export class DashboardComponent extends BaseActionComponent implements OnInit {
 
   public userOnlines: any;
+  public ranking: Player[];
   public challenges: any;
   public userLoggedIn: string;
   public msgs: Message[] = [];
@@ -30,6 +32,7 @@ export class DashboardComponent extends BaseActionComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.getRanking();
     this.socketService.getOnlineUsers();
     this.socketService.getChallenges();
     this.socketService.onStartGame();
@@ -73,8 +76,12 @@ export class DashboardComponent extends BaseActionComponent implements OnInit {
     });
   }
 
-  // @HostListener('window:beforeunload', ['$event'])
-  // beforeunloadHandler(event) {
-  //   this.authService.logout('username');
-  // }
+  private getRanking() {
+    this.requestService.get('/ranking')
+      .subscribe((ranking: HttpResponse<Player[]>) => {
+        this.ranking = ranking.body;
+      }, (error) => {
+        this.msgs = [{ severity: 'error', summary: 'Error', detail: error }];
+      });
+  }
 }

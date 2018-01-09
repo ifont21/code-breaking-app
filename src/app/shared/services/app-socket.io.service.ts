@@ -22,19 +22,20 @@ export class AppSocketIOService {
 
   public myTurn: Subject<boolean> = new Subject<boolean>();
 
-  public myNumber: number;
+  public myNumber: string;
 
   public opponentUsername: string;
   public userLogged: string;
 
   public lost: Subject<boolean> = new Subject<boolean>();
 
+  public challengeId: string;
+
   private attemptsSubject: Subject<any> = new Subject<any>();
   private attempts = [];
 
   private attemptsOpponentSubject: Subject<any> = new Subject<any>();
   private attemptsOpponent: any;
-
 
   constructor(
     private router: Router
@@ -49,8 +50,8 @@ export class AppSocketIOService {
     });
   }
 
-  emitToFetchOnlineUsers(data: Player) {
-    this.socket.emit('online', { username: data.username });
+  emitToFetchOnlineUsers(data: any, reload: boolean = false) {
+    this.socket.emit('online', { username: data.username, reload: reload });
   }
 
   emitToFetchChallenges() {

@@ -1,12 +1,16 @@
+import { Message } from 'primeng/primeng';
+import { HttpResponse } from '@angular/common/http';
+import { Challenger } from './../shared/models/challenger';
 import { Authservice } from './../shared/services/auth.service';
 import { BaseActionComponent } from './../shared/components/base-action/base-action.component';
 import { RequestService } from './../shared/services/request.service';
 import { AppSocketIOService } from './../shared/services/app-socket.io.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/switchMap';
+import { Challenge } from '../shared/models/challenge';
 
 
 @Component({
@@ -39,6 +43,10 @@ export class GameComponent extends BaseActionComponent implements OnInit {
   public endGameMessage: string;
   public visible = false;
 
+  private challengers: any;
+
+  public msgs: Message[] = [];
+
   private path = '/challenges';
 
   constructor(
@@ -46,6 +54,7 @@ export class GameComponent extends BaseActionComponent implements OnInit {
     private socketService: AppSocketIOService,
     private fb: FormBuilder,
     private route: ActivatedRoute,
+    private router: Router,
     private request: RequestService
   ) {
     super(authService);
@@ -73,8 +82,10 @@ export class GameComponent extends BaseActionComponent implements OnInit {
       .filter((params: Params) => params['id'])
       .switchMap((params: Params) => this.request.get(`${this.path}/${params['id']}`))
       .subscribe((res: any) => {
+        this.socketService.challengeId = res.body._id;
         const challengerOne = res.body.challengerOne.player.username;
         const challengerTwo = res.body.challengerTwo.player.username;
+        this.challengers = { challengerOne, challengerTwo };
         this.opponent = challengerOne === this.userLoggedIn ? challengerTwo : challengerOne;
         this.socketService.opponentUsername = this.opponent;
       });
@@ -103,13 +114,7 @@ export class GameComponent extends BaseActionComponent implements OnInit {
 
   setAttempt() {
     const results = this.getPointsAndFames(this.socketService.numberOpp, this.attemptsForm.controls['attemptNumber'].value);
-    if (results.fames === 4) {
-      // set winner message
-      this.endGameMessage = 'You are the Winner';
-      this.visible = true;
-      this.socketService.emitLoser();
-      return;
-    }
+
     const attempt = {
       number: this.attemptsForm.controls['attemptNumber'].value,
       points: results.points,
@@ -119,9 +124,74 @@ export class GameComponent extends BaseActionComponent implements OnInit {
     this.socketService.setAttempt(attempt);
     this.socketService.emitShowOpponentAttempts();
 
+    if (results.fames === 4) {
+      const challenge = new Challenge();
+      if (this.challengers.challengerOne === this.userLoggedIn) {
+        const challengerOne = new Challenger();
+        challengerOne.number = this.socketService.myNumber;
+        challengerOne.winner = true;
+        challengerOne.attempts = this.myAttempts.length;
+
+        const challengerTwo = new Challenger();
+        challengerTwo.number = this.socketService.numberOpp;
+        challengerTwo.winner = false;
+
+        challenge.challengerOne = challengerOne;
+        challenge.challengerTwo = challengerTwo;
+
+      } else {
+        const challengerTwo = new Challenger();
+        challengerTwo.number = this.socketService.myNumber;
+        challengerTwo.winner = true;
+        challengerTwo.attempts = this.myAttempts.length;
+
+        const challengerOne = new Challenger();
+        challengerOne.number = this.socketService.numberOpp;
+        challengerOne.winner = false;
+
+        challenge.challengerOne = challengerOne;
+        challenge.challengerTwo = challengerTwo;
+      }
+
+      this.request.put(`/challenges/${this.socketService.challengeId}`, challenge)
+        .subscribe((response: HttpResponse<any>) => {
+          let keyWinner = '';
+          let keyLost = '';
+          if (response.body.challenge.challengerOne.winner) {
+            keyWinner = 'challengerOne';
+            keyLost = 'challengerTwo';
+          } else {
+            keyWinner = 'challengerTwo';
+            keyLost = 'challengerOne';
+          }
+
+          this.request.patch(`/players/${response.body.challenge[keyWinner].player}`, { winner: true })
+            .subscribe((player: HttpResponse<any>) => {
+              if (player.body) {
+                this.endGameMessage = 'You are the Winner';
+                this.visible = true;
+              }
+            });
+          this.request.patch(`/players/${response.body.challenge[keyLost].player}`, { winner: false })
+            .subscribe((player: HttpResponse<any>) => {
+              if (player.body) {
+                this.socketService.emitLoser();
+              }
+            });
+        }, (error) => {
+          this.msgs = [{ severity: 'error', summary: 'Error', detail: error }];
+        });
+      return;
+    }
+
     this.myTurn = false;
     this.socketService.emitTurn();
 
+  }
+
+  continue() {
+    this.socketService.emitToFetchOnlineUsers({ username: this.userLoggedIn }, true);
+    this.router.navigate(['/dashboard']);
   }
 
   private getPointsAndFames(number, attempt) {
